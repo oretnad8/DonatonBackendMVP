@@ -13,7 +13,8 @@ def seed_db():
         host="localhost",
         user="root",
         password="",
-        database="donaton_db"
+        database="donaton_db",
+        charset="utf8"
     )
     cursor = conn.cursor()
 
