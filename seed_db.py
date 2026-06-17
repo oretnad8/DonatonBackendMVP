@@ -1,0 +1,67 @@
+import mysql.connector
+import bcrypt
+import uuid
+
+def hash_password(password):
+    salt = bcrypt.gensalt(rounds=10)
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed.decode('utf-8')
+
+def seed_db():
+    print("Conectando a base de datos...")
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="donaton_db"
+    )
+    cursor = conn.cursor()
+
+    print("Seeding usuarios...")
+    
+    # Usuarios (UUID -> binary(16))
+    users = [
+        (uuid.uuid4().bytes, "11111111-1", "Admin", "Donaton", "admin@donaton.cl", hash_password("admin123"), "ADMIN_SENAPRED", True),
+        (uuid.uuid4().bytes, "22222222-2", "Coordinador", "Bodega", "coordinador@donaton.cl", hash_password("coord123"), "JEFE_BODEGA", True),
+        (uuid.uuid4().bytes, "33333333-3", "Voluntario", "Terreno", "voluntario@donaton.cl", hash_password("volun123"), "VOLUNTARIO_TERRENO", True)
+    ]
+    
+    for u in users:
+        cursor.execute("SELECT email FROM usuarios WHERE email = %s", (u[4],))
+        if cursor.fetchone():
+            print(f"Usuario {u[4]} ya existe.")
+        else:
+            cursor.execute("""
+                INSERT INTO usuarios (id, rut, nombre, apellido, email, password, rol, estado)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, u)
+            
+    print("Seeding necesidades...")
+    cursor.execute("SELECT count(*) FROM necesidades")
+    count_nec = cursor.fetchone()[0]
+    if count_nec == 0:
+        cursor.execute("""
+            INSERT INTO necesidades (nombre, descripcion, cantidad_requerida, cantidad_actual, ubicacion, latitud, longitud, nivel_prioridad, estado, categoria, fecha_creacion, id_coordinador)
+            VALUES 
+            ('Bidones de Agua (5L)', 'Agua potable en bidones', 250, 50, 'VIÑA DEL MAR', -33.0245, -71.5518, 'ALTA', 'PENDIENTE', 'Alimentos', NOW(), NULL),
+            ('Kit de Construcción', 'Kits básicos para reparación', 45, 10, 'QUILPUÉ', -33.0485, -71.4429, 'MEDIA', 'EN_PROCESO', 'Construcción', NOW(), NULL),
+            ('Frazadas Térmicas', 'Frazadas para invierno', 120, 80, 'VILLA ALEMANA', -33.0422, -71.3733, 'BAJA', 'PENDIENTE', 'Higiene', NOW(), NULL)
+        """)
+        
+    print("Seeding stock...")
+    cursor.execute("SELECT count(*) FROM stock")
+    count_stock = cursor.fetchone()[0]
+    if count_stock == 0:
+        cursor.execute("""
+            INSERT INTO stock (sku, nombre, descripcion, cantidad_disponible, categoria, ubicacion_bodega, fecha_ingreso, fecha_vencimiento, estado)
+            VALUES 
+            ('ALI-001', 'Arroz', 'Arroz grado 2', 500, 'Alimentos', 'Bodega Central', NOW(), NULL, 'DISPONIBLE'),
+            ('HIG-001', 'Papel Higiénico', 'Pack 4 rollos', 200, 'Higiene', 'Bodega 2', NOW(), NULL, 'DISPONIBLE')
+        """)
+
+    conn.commit()
+    conn.close()
+    print("Seeding finalizado.")
+
+if __name__ == "__main__":
+    seed_db()
