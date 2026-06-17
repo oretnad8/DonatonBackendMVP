@@ -22,9 +22,9 @@ def seed_db():
     
     # Usuarios (UUID -> binary(16))
     users = [
-        (uuid.uuid4().bytes, "11111111-1", "Admin", "Donaton", "admin@donaton.cl", hash_password("admin123"), "ADMIN_SENAPRED", True),
-        (uuid.uuid4().bytes, "22222222-2", "Coordinador", "Bodega", "coordinador@donaton.cl", hash_password("coord123"), "JEFE_BODEGA", True),
-        (uuid.uuid4().bytes, "33333333-3", "Voluntario", "Terreno", "voluntario@donaton.cl", hash_password("volun123"), "VOLUNTARIO_TERRENO", True)
+        (str(uuid.uuid4()), "11111111-1", "Admin", "Donaton", "admin@donaton.cl", hash_password("admin123"), "ADMIN_SENAPRED", True),
+        (str(uuid.uuid4()), "22222222-2", "Coordinador", "Bodega", "coordinador@donaton.cl", hash_password("coord123"), "JEFE_BODEGA", True),
+        (str(uuid.uuid4()), "33333333-3", "Voluntario", "Terreno", "voluntario@donaton.cl", hash_password("volun123"), "VOLUNTARIO_TERRENO", True)
     ]
     
     for u in users:

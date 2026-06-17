@@ -9,6 +9,8 @@ public class Usuario {
     
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @org.hibernate.annotations.JdbcTypeCode(java.sql.Types.VARCHAR)
+    @Column(columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private UUID id;
 
     @Column(unique = true, nullable = false)
