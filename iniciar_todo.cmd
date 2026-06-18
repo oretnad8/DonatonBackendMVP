@@ -1,5 +1,5 @@
 @echo off
-set "JAVA_HOME=C:\Program Files\Java\jdk-26.0.1"
+cd /d "%~dp0"
 echo =======================================================
 echo =        SISTEMA DONATON - DEPLOY AUTOMATIZADO        =
 echo =======================================================
@@ -14,30 +14,30 @@ echo.
 echo [2/4] COMPILANDO MICROSERVICIOS...
 echo Compilando auth-service...
 cd auth-service
-call mvnw.cmd clean install -DskipTests >nul 2>&1
+call mvnw.cmd clean install -DskipTests
 cd ..
 
 echo Compilando user-service...
 cd user-service
-call mvnw.cmd clean install -DskipTests >nul 2>&1
+call mvnw.cmd clean install -DskipTests
 cd ..
 
 echo Compilando necesidades...
 cd necesidades
-call mvnw.cmd clean install -DskipTests >nul 2>&1
+call mvnw.cmd clean install -DskipTests
 cd ..
 
 echo Compilando stock...
 cd stock
-call mvnw.cmd clean install -DskipTests >nul 2>&1
+call mvnw.cmd clean install -DskipTests
 cd ..
 
 echo Preparando match-service (Python)...
 cd match-service
 if not exist "venv" (
-    python -m venv venv >nul 2>&1
+    python -m venv venv
 )
-venv\Scripts\python.exe -m pip install -r requirements.txt >nul 2>&1
+venv\Scripts\python.exe -m pip install -r requirements.txt
 cd ..
 
 echo.
