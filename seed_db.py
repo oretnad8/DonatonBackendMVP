@@ -7,16 +7,39 @@ def hash_password(password):
     hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hashed.decode('utf-8')
 
+import time
+
 def seed_db():
     print("Conectando a base de datos...")
-    conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="donaton_db",
-        charset="utf8"
-    )
-    cursor = conn.cursor()
+    
+    # Retry loop para esperar a que los microservicios creen las tablas
+    max_retries = 20
+    conn = None
+    for i in range(max_retries):
+        try:
+            conn = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="",
+                database="donaton_db",
+                charset="utf8"
+            )
+            cursor = conn.cursor()
+            # Verificar si la tabla usuarios ya fue creada por Hibernate
+            cursor.execute("SHOW TABLES LIKE 'usuarios'")
+            if cursor.fetchone():
+                print("Tablas detectadas. Procediendo con el seeding...")
+                break
+            else:
+                print(f"[{i+1}/{max_retries}] Base de datos conectada, pero la tabla 'usuarios' aun no existe. Esperando 5 segundos...")
+                conn.close()
+                time.sleep(5)
+        except mysql.connector.Error as err:
+            print(f"[{i+1}/{max_retries}] Error conectando a la BD: {err}. Esperando 5 segundos...")
+            time.sleep(5)
+    else:
+        print("Error crítico: Las tablas no fueron creadas después de 100 segundos. Abortando seed.")
+        return
 
     print("Seeding usuarios...")
     
