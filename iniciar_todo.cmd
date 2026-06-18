@@ -1,4 +1,11 @@
 @echo off
+set "JAVA_HOME="
+FOR /D %%i IN ("C:\Program Files\Java\jdk*") DO set "JAVA_HOME=%%i"
+if "%JAVA_HOME%"=="" (
+    echo [ADVERTENCIA] No se encontro un JDK en C:\Program Files\Java\jdk*. El build podria fallar.
+) else (
+    echo Usando JAVA_HOME detectado: %JAVA_HOME%
+)
 cd /d "%~dp0"
 echo =======================================================
 echo =        SISTEMA DONATON - DEPLOY AUTOMATIZADO        =
