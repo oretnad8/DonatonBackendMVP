@@ -12,55 +12,36 @@ public class Stock {
     private Long id;
 
     @NotBlank
-    private String tipoItem;
+    private String nombre;
+
+    @NotBlank
+    private String categoria;
 
     private Integer cantidadDisponible;
 
-    @NotBlank
-    private String comuna;
-
     private String estado;
+
+    @NotBlank
+    private String ubicacionBodega;
 
     public Stock() {
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getTipoItem() {
-        return tipoItem;
-    }
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 
-    public void setTipoItem(String tipoItem) {
-        this.tipoItem = tipoItem;
-    }
+    public Integer getCantidadDisponible() { return cantidadDisponible; }
+    public void setCantidadDisponible(Integer cantidadDisponible) { this.cantidadDisponible = cantidadDisponible; }
 
-    public Integer getCantidadDisponible() {
-        return cantidadDisponible;
-    }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
-    public void setCantidadDisponible(Integer cantidadDisponible) {
-        this.cantidadDisponible = cantidadDisponible;
-    }
-
-    public String getComuna() {
-        return comuna;
-    }
-
-    public void setComuna(String comuna) {
-        this.comuna = comuna;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
+    public String getUbicacionBodega() { return ubicacionBodega; }
+    public void setUbicacionBodega(String ubicacionBodega) { this.ubicacionBodega = ubicacionBodega; }
 }

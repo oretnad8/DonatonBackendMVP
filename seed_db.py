@@ -65,11 +65,11 @@ def seed_db():
     count_nec = cursor.fetchone()[0]
     if count_nec == 0:
         cursor.execute("""
-            INSERT INTO necesidades (nombre, descripcion, cantidad_requerida, cantidad_actual, ubicacion, latitud, longitud, nivel_prioridad, estado, categoria, fecha_creacion, id_coordinador)
+            INSERT INTO necesidades (nombre, categoria, cantidad_requerida, nivel_prioridad, ubicacion)
             VALUES 
-            ('Bidones de Agua (5L)', 'Agua potable en bidones', 250, 50, 'VIÑA DEL MAR', -33.0245, -71.5518, 'ALTA', 'PENDIENTE', 'Alimentos', NOW(), NULL),
-            ('Kit de Construcción', 'Kits básicos para reparación', 45, 10, 'QUILPUÉ', -33.0485, -71.4429, 'MEDIA', 'EN_PROCESO', 'Construcción', NOW(), NULL),
-            ('Frazadas Térmicas', 'Frazadas para invierno', 120, 80, 'VILLA ALEMANA', -33.0422, -71.3733, 'BAJA', 'PENDIENTE', 'Higiene', NOW(), NULL)
+            ('Bidones de Agua (5L)', 'Alimentos', 250, 'ALTA', 'VIÑA DEL MAR'),
+            ('Kit de Construcción', 'Construcción', 45, 'MEDIA', 'QUILPUÉ'),
+            ('Frazadas Térmicas', 'Higiene', 120, 'BAJA', 'VILLA ALEMANA')
         """)
         
     print("Seeding stock...")
@@ -77,10 +77,10 @@ def seed_db():
     count_stock = cursor.fetchone()[0]
     if count_stock == 0:
         cursor.execute("""
-            INSERT INTO stock (sku, nombre, descripcion, cantidad_disponible, categoria, ubicacion_bodega, fecha_ingreso, fecha_vencimiento, estado)
+            INSERT INTO stock (nombre, categoria, cantidad_disponible, estado, ubicacion_bodega)
             VALUES 
-            ('ALI-001', 'Arroz', 'Arroz grado 2', 500, 'Alimentos', 'Bodega Central', NOW(), NULL, 'DISPONIBLE'),
-            ('HIG-001', 'Papel Higiénico', 'Pack 4 rollos', 200, 'Higiene', 'Bodega 2', NOW(), NULL, 'DISPONIBLE')
+            ('Arroz', 'Alimentos', 500, 'DISPONIBLE', 'Bodega Central'),
+            ('Papel Higiénico', 'Higiene', 200, 'DISPONIBLE', 'Bodega 2')
         """)
 
     conn.commit()

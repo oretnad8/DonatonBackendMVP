@@ -12,55 +12,36 @@ public class Necesidad {
     private Long id;
 
     @NotBlank
-    private String comuna;
+    private String nombre;
 
     @NotBlank
-    private String tipoItem;
+    private String categoria;
 
-    private Integer cantidad;
+    private Integer cantidadRequerida;
 
-    private String urgencia;
+    private String nivelPrioridad;
+
+    @NotBlank
+    private String ubicacion;
 
     public Necesidad() {
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getComuna() {
-        return comuna;
-    }
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 
-    public void setComuna(String comuna) {
-        this.comuna = comuna;
-    }
+    public Integer getCantidadRequerida() { return cantidadRequerida; }
+    public void setCantidadRequerida(Integer cantidadRequerida) { this.cantidadRequerida = cantidadRequerida; }
 
-    public String getTipoItem() {
-        return tipoItem;
-    }
+    public String getNivelPrioridad() { return nivelPrioridad; }
+    public void setNivelPrioridad(String nivelPrioridad) { this.nivelPrioridad = nivelPrioridad; }
 
-    public void setTipoItem(String tipoItem) {
-        this.tipoItem = tipoItem;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public String getUrgencia() {
-        return urgencia;
-    }
-
-    public void setUrgencia(String urgencia) {
-        this.urgencia = urgencia;
-    }
+    public String getUbicacion() { return ubicacion; }
+    public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
 }

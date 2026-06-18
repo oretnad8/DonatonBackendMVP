@@ -28,10 +28,11 @@ public class StockService {
 
     public Stock actualizar(Long id, Stock datosNuevos) {
         Stock stock = buscarPorId(id);
-        stock.setTipoItem(datosNuevos.getTipoItem());
+        stock.setNombre(datosNuevos.getNombre());
+        stock.setCategoria(datosNuevos.getCategoria());
         stock.setCantidadDisponible(datosNuevos.getCantidadDisponible());
-        stock.setComuna(datosNuevos.getComuna());
         stock.setEstado(datosNuevos.getEstado());
+        stock.setUbicacionBodega(datosNuevos.getUbicacionBodega());
         return stockRepository.save(stock);
     }
 

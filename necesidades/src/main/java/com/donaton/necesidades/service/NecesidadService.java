@@ -27,10 +27,11 @@ public class NecesidadService {
 
     public Necesidad actualizar(Long id, Necesidad datosNuevos) {
         Necesidad necesidad = buscarPorId(id);
-        necesidad.setComuna(datosNuevos.getComuna());
-        necesidad.setTipoItem(datosNuevos.getTipoItem());
-        necesidad.setCantidad(datosNuevos.getCantidad());
-        necesidad.setUrgencia(datosNuevos.getUrgencia());
+        necesidad.setNombre(datosNuevos.getNombre());
+        necesidad.setCategoria(datosNuevos.getCategoria());
+        necesidad.setCantidadRequerida(datosNuevos.getCantidadRequerida());
+        necesidad.setNivelPrioridad(datosNuevos.getNivelPrioridad());
+        necesidad.setUbicacion(datosNuevos.getUbicacion());
         return necesidadRepository.save(necesidad);
     }
 
