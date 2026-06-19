@@ -9,6 +9,7 @@ public class UsuarioRequestDTO {
     private String email;
     private String password;
     private Rol rol;
+    private Boolean estado;
 
     public String getRut() { return rut; }
     public void setRut(String rut) { this.rut = rut; }
@@ -22,4 +23,6 @@ public class UsuarioRequestDTO {
     public void setPassword(String password) { this.password = password; }
     public Rol getRol() { return rol; }
     public void setRol(Rol rol) { this.rol = rol; }
+    public Boolean getEstado() { return estado; }
+    public void setEstado(Boolean estado) { this.estado = estado; }
 }

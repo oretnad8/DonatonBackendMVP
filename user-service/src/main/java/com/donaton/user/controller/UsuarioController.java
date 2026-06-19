@@ -20,6 +20,12 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN_SENAPRED')")
+    public ResponseEntity<java.util.List<UsuarioResponseDTO>> obtenerTodos() {
+        return ResponseEntity.ok(usuarioService.obtenerTodos());
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN_SENAPRED')")
     public ResponseEntity<UsuarioResponseDTO> crearUsuario(@RequestBody UsuarioRequestDTO request) {
@@ -28,13 +34,20 @@ public class UsuarioController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN_SENAPRED') or #id.toString() == authentication.principal")
-    public ResponseEntity<UsuarioResponseDTO> obtenerUsuario(@PathVariable UUID id) {
+    public ResponseEntity<UsuarioResponseDTO> obtenerUsuario(@PathVariable java.util.UUID id) {
         return ResponseEntity.ok(usuarioService.obtenerUsuario(id));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN_SENAPRED') or #id.toString() == authentication.principal")
-    public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(@PathVariable UUID id, @RequestBody UsuarioRequestDTO request) {
-        return ResponseEntity.ok(usuarioService.actualizarContacto(id, request.getEmail(), request.getNombre(), request.getApellido()));
+    @PreAuthorize("hasRole('ADMIN_SENAPRED')")
+    public ResponseEntity<UsuarioResponseDTO> actualizarUsuarioCompleto(@PathVariable java.util.UUID id, @RequestBody UsuarioRequestDTO request) {
+        return ResponseEntity.ok(usuarioService.actualizarUsuarioCompleto(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN_SENAPRED')")
+    public ResponseEntity<Void> eliminarUsuario(@PathVariable java.util.UUID id) {
+        usuarioService.eliminarUsuario(id);
+        return ResponseEntity.noContent().build();
     }
 }

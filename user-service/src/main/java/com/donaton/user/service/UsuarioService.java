@@ -61,4 +61,38 @@ public class UsuarioService {
 
         return new UsuarioResponseDTO(usuarioRepository.save(usuario));
     }
+
+    public java.util.List<UsuarioResponseDTO> obtenerTodos() {
+        return usuarioRepository.findAll().stream()
+                .map(UsuarioResponseDTO::new)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    public void eliminarUsuario(UUID id) {
+        usuarioRepository.deleteById(id);
+    }
+
+    public UsuarioResponseDTO actualizarUsuarioCompleto(UUID id, UsuarioRequestDTO request) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        
+        if (request.getEmail() != null && !request.getEmail().equals(usuario.getEmail()) && usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("El email ya está en uso por otro usuario");
+        }
+
+        usuario.setRut(request.getRut());
+        usuario.setNombre(request.getNombre());
+        usuario.setApellido(request.getApellido());
+        usuario.setEmail(request.getEmail());
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        if (request.getRol() != null) {
+            usuario.setRol(request.getRol());
+        }
+        if (request.getEstado() != null) {
+            usuario.setEstado(request.getEstado());
+        }
+        return new UsuarioResponseDTO(usuarioRepository.save(usuario));
+    }
 }

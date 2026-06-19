@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from typing import List
+import re
 
 app = FastAPI(
     title="Donatón Match Service",
@@ -18,6 +19,7 @@ class Necesidad(BaseModel):
     tipoItem: str = Field(..., description="Tipo de ítem solicitado (ej: Agua, Frazadas)")
     cantidad: int = Field(..., gt=0, description="Cantidad solicitada")
     urgencia: str = Field(..., description="Nivel de urgencia: ALTA, MEDIA, BAJA")
+    nombreOriginal: str = Field(default="", description="Nombre real del ítem")
 
 class Stock(BaseModel):
     id: int = Field(..., description="ID único del registro de stock")
@@ -25,6 +27,7 @@ class Stock(BaseModel):
     tipoItem: str = Field(..., description="Tipo de ítem disponible")
     cantidadDisponible: int = Field(..., ge=0, description="Cantidad disponible en stock")
     estado: str = Field(..., description="Estado del stock, ej: DISPONIBLE")
+    nombreOriginal: str = Field(default="", description="Nombre real del ítem")
 
 class MatchRequest(BaseModel):
     necesidades: List[Necesidad] = Field(..., description="Lista de necesidades recopiladas")
@@ -54,6 +57,28 @@ URGENCIA_PESOS = {
     "BAJA": 3
 }
 
+def extraer_palabras_clave(texto: str) -> set:
+    if not texto: return set()
+    texto = texto.lower()
+    texto = re.sub(r'[^\w\s]', '', texto)
+    palabras = texto.split()
+    stop_words = {'de', 'para', 'en', 'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'y', 'o', 'kit', 'con', 'del', 'al'}
+    return set([p for p in palabras if p not in stop_words and len(p) > 2])
+
+def son_compatibles(nec: Necesidad, st: Stock) -> bool:
+    # Deben ser de la misma categoría general
+    if nec.tipoItem.strip().lower() != st.tipoItem.strip().lower():
+        return False
+        
+    nec_kw = extraer_palabras_clave(nec.nombreOriginal)
+    st_kw = extraer_palabras_clave(st.nombreOriginal)
+    
+    # Si alguno no tiene palabras clave válidas, hacemos fallback a la categoría
+    if not nec_kw or not st_kw:
+        return True
+        
+    # Match semántico básico: intersección de palabras clave
+    return len(nec_kw & st_kw) > 0
 
 # ==========================================
 # 3. ENDPOINTS
@@ -92,10 +117,10 @@ def procesar_match(request: MatchRequest):
     for necesidad in necesidades_ordenadas:
         cantidad_restante = necesidad.cantidad
         
-        # Filtrar stocks que sean del mismo tipo de ítem y que tengan disponibilidad
+        # Filtrar stocks que sean compatibles algorítmicamente y tengan disponibilidad
         stocks_compatibles = [
             s for s in stocks_disponibles 
-            if s.tipoItem.strip().lower() == necesidad.tipoItem.strip().lower() and s.cantidadDisponible > 0
+            if son_compatibles(necesidad, s) and s.cantidadDisponible > 0
         ]
         
         # Ordenar stocks compatibles: primero los de la misma comuna (Prioridad 1: Cercanía Geográfica)

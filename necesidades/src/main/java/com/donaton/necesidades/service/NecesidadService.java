@@ -9,8 +9,12 @@ import java.util.List;
 
 @Service
 public class NecesidadService {
+    private final NecesidadRepository necesidadRepository;
 
-    private final NecesidadRepository necesidadRepository = null;
+    @Autowired
+    public NecesidadService(NecesidadRepository necesidadRepository) {
+        this.necesidadRepository = necesidadRepository;
+    }
 
     public List<Necesidad> listarTodas() {
         return necesidadRepository.findAll();
