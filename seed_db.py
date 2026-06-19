@@ -14,6 +14,17 @@ def seed_db():
     
     # Retry loop para esperar a que los microservicios creen las tablas
     max_retries = 20
+    
+    # Primero asegurarse de que la base de datos exista con UTF8
+    try:
+        temp_conn = mysql.connector.connect(host="localhost", user="root", password="")
+        temp_cursor = temp_conn.cursor()
+        temp_cursor.execute("CREATE DATABASE IF NOT EXISTS donaton_db CHARACTER SET utf8 COLLATE utf8_general_ci")
+        temp_conn.commit()
+        temp_conn.close()
+    except Exception as e:
+        print(f"Error asegurando creación de BD: {e}")
+
     conn = None
     for i in range(max_retries):
         try:
@@ -25,13 +36,19 @@ def seed_db():
                 charset="utf8"
             )
             cursor = conn.cursor()
-            # Verificar si la tabla usuarios ya fue creada por Hibernate
+            # Verificar si TODAS las tablas ya fueron creadas por Hibernate
             cursor.execute("SHOW TABLES LIKE 'usuarios'")
-            if cursor.fetchone():
+            has_usuarios = cursor.fetchone()
+            cursor.execute("SHOW TABLES LIKE 'necesidades'")
+            has_necesidades = cursor.fetchone()
+            cursor.execute("SHOW TABLES LIKE 'stock'")
+            has_stock = cursor.fetchone()
+            
+            if has_usuarios and has_necesidades and has_stock:
                 print("Tablas detectadas. Procediendo con el seeding...")
                 break
             else:
-                print(f"[{i+1}/{max_retries}] Base de datos conectada, pero la tabla 'usuarios' aun no existe. Esperando 5 segundos...")
+                print(f"[{i+1}/{max_retries}] Base de datos conectada, pero faltan tablas (usuarios:{bool(has_usuarios)}, nec:{bool(has_necesidades)}, stock:{bool(has_stock)}). Esperando 5 segundos...")
                 conn.close()
                 time.sleep(5)
         except mysql.connector.Error as err:
