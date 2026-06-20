@@ -22,21 +22,25 @@ echo [2/4] COMPILANDO MICROSERVICIOS...
 echo Compilando auth-service...
 cd auth-service
 call mvnw.cmd clean install -DskipTests
+if errorlevel 1 ( echo ERROR COMPILANDO AUTH-SERVICE && pause && exit /b 1 )
 cd ..
 
 echo Compilando user-service...
 cd user-service
 call mvnw.cmd clean install -DskipTests
+if errorlevel 1 ( echo ERROR COMPILANDO USER-SERVICE && pause && exit /b 1 )
 cd ..
 
 echo Compilando necesidades...
 cd necesidades
 call mvnw.cmd clean install -DskipTests
+if errorlevel 1 ( echo ERROR COMPILANDO NECESIDADES && pause && exit /b 1 )
 cd ..
 
 echo Compilando stock...
 cd stock
 call mvnw.cmd clean install -DskipTests
+if errorlevel 1 ( echo ERROR COMPILANDO STOCK && pause && exit /b 1 )
 cd ..
 
 echo Preparando match-service (Python)...
@@ -49,12 +53,19 @@ cd ..
 
 echo.
 echo [3/4] INICIANDO SERVICIOS EN SEGUNDO PLANO...
+if "%JAVA_HOME%"=="" (
+    set "JAVA_CMD=java"
+) else (
+    set "JAVA_CMD="%JAVA_HOME%\bin\java.exe""
+)
+
+echo Usando ejecutable Java: %JAVA_CMD%
 echo Iniciando Auth (8081), User (8082), Necesidades (8083), Stock (8084) e IA (8000)...
-start /B cmd /c "cd auth-service\target && java -jar auth-service-0.0.1-SNAPSHOT.jar"
-start /B cmd /c "cd user-service\target && java -jar user-service-0.0.1-SNAPSHOT.jar"
-start /B cmd /c "cd necesidades\target && java -jar necesidades-0.0.1-SNAPSHOT.jar"
-start /B cmd /c "cd stock\target && java -jar stock-0.0.1-SNAPSHOT.jar"
-start /B cmd /c "cd match-service && call venv\Scripts\activate.bat && python app.py"
+start "Auth-Service" cmd /k "cd auth-service\target && %JAVA_CMD% -jar auth-service-0.0.1-SNAPSHOT.jar"
+start "User-Service" cmd /k "cd user-service\target && %JAVA_CMD% -jar user-service-0.0.1-SNAPSHOT.jar"
+start "Necesidades-Service" cmd /k "cd necesidades\target && %JAVA_CMD% -jar necesidades-0.0.1-SNAPSHOT.jar"
+start "Stock-Service" cmd /k "cd stock\target && %JAVA_CMD% -jar stock-0.0.1-SNAPSHOT.jar"
+start "Match-IA" cmd /k "cd match-service && call venv\Scripts\activate.bat && python app.py"
 
 echo.
 echo Esperando 30 segundos para que todos los servicios inicien y se creen las tablas en BD...
